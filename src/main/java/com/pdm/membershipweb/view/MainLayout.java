@@ -1,8 +1,11 @@
-package com.pdm.membershipweb.views;
+package com.pdm.membershipweb.view;
 
-
-import com.pdm.membershipweb.views.about.AboutView;
-import com.pdm.membershipweb.views.home.HomeView;
+import com.pdm.membershipweb.page.AboutPage;
+import com.pdm.membershipweb.page.HomePage;
+import com.pdm.membershipweb.page.MemberListPage;
+import com.pdm.membershipweb.page.NewsListPage;
+import com.pdm.membershipweb.page.NotificationListPage;
+import com.pdm.membershipweb.page.RedeemableItemListPage;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -24,50 +27,13 @@ import com.vaadin.flow.router.RouterLink;
  */
 public class MainLayout extends AppLayout {
 
-    /**
-     * A simple navigation item component, based on ListItem element.
-     */
-    public static class MenuItemInfo extends ListItem {
-
-        private final Class<? extends Component> view;
-
-        public MenuItemInfo(String menuTitle, String iconClass, Class<? extends Component> view) {
-            this.view = view;
-            RouterLink link = new RouterLink();
-            link.addClassNames("menu-item-link");
-            link.setRoute(view);
-
-            Span text = new Span(menuTitle);
-            text.addClassNames("menu-item-text");
-
-            link.add(new LineAwesomeIcon(iconClass), text);
-            add(link);
-        }
-
-        public Class<?> getView() {
-            return view;
-        }
-
-        /**
-         * Simple wrapper to create icons using LineAwesome iconset. See
-         * https://icons8.com/line-awesome
-         */
-        @NpmPackage(value = "line-awesome", version = "1.3.0")
-        public static class LineAwesomeIcon extends Span {
-            public LineAwesomeIcon(String lineawesomeClassnames) {
-                addClassNames("menu-item-icon");
-                if (!lineawesomeClassnames.isEmpty()) {
-                    addClassNames(lineawesomeClassnames);
-                }
-            }
-        }
-
-    }
+	private static final long serialVersionUID = -4018689750215108544L;
 
     private H1 viewTitle;
+    
 
     public MainLayout() {
-        setPrimarySection(Section.DRAWER);
+        setPrimarySection(Section.NAVBAR);
         addToNavbar(true, createHeaderContent());
         addToDrawer(createDrawerContent());
     }
@@ -87,7 +53,7 @@ public class MainLayout extends AppLayout {
     }
 
     private Component createDrawerContent() {
-        H2 appName = new H2("PDM Membership");
+        H2 appName = new H2("PDM Membership System");
         appName.addClassNames("app-name");
 
         com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section(appName,
@@ -114,18 +80,19 @@ public class MainLayout extends AppLayout {
     }
 
     private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[]{ //
-                new MenuItemInfo("Home", "la la-globe", HomeView.class), //
-
-                new MenuItemInfo("About", "la la-file", AboutView.class), //
-
+        return new MenuItemInfo[] { 
+            new MenuItemInfo("Home", "la la-globe", HomePage.class), 
+            new MenuItemInfo("Member", "la la-user", MemberListPage.class), 
+            new MenuItemInfo("Notification", "la la-comment", NotificationListPage.class), 
+            new MenuItemInfo("News", "la la-list", NewsListPage.class),
+            new MenuItemInfo("Redeemable Item", "la la-indent", RedeemableItemListPage.class),
+            new MenuItemInfo("About", "la la-file", AboutPage.class), 
         };
     }
 
     private Footer createFooter() {
         Footer layout = new Footer();
         layout.addClassNames("footer");
-
         return layout;
     }
 
@@ -138,5 +105,50 @@ public class MainLayout extends AppLayout {
     private String getCurrentPageTitle() {
         PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
         return title == null ? "" : title.value();
+    }
+    
+    
+    public static class MenuItemInfo extends ListItem {
+
+		private static final long serialVersionUID = 5922991650623495228L;
+		
+		private final Class<? extends Component> view;
+		
+
+        public MenuItemInfo(String menuTitle, String iconClass, Class<? extends Component> view) {
+            this.view = view;
+            RouterLink link = new RouterLink();
+            link.addClassNames("menu-item-link");
+            link.setRoute(view);
+
+            Span text = new Span(menuTitle);
+            text.addClassNames("menu-item-text");
+
+            link.add(new LineAwesomeIcon(iconClass), text);
+            add(link);
+        }
+
+        public Class<?> getView() {
+            return view;
+        }
+
+        /**
+         * Simple wrapper to create icons using LineAwesome iconset. See
+         * https://icons8.com/line-awesome
+         */
+        @NpmPackage(value = "line-awesome", version = "1.3.0")
+        public static class LineAwesomeIcon extends Span {
+            
+			private static final long serialVersionUID = 5880422295037684461L;
+
+			
+			public LineAwesomeIcon(String lineawesomeClassnames) {
+                addClassNames("menu-item-icon");
+                if (!lineawesomeClassnames.isEmpty()) {
+                    addClassNames(lineawesomeClassnames);
+                }
+            }
+        }
+
     }
 }

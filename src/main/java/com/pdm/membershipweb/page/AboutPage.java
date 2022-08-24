@@ -1,6 +1,6 @@
-package com.pdm.membershipweb.views.about;
+package com.pdm.membershipweb.page;
 
-import com.pdm.membershipweb.views.MainLayout;
+import com.pdm.membershipweb.view.MainLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
@@ -10,9 +10,12 @@ import com.vaadin.flow.router.Route;
 
 @PageTitle("About")
 @Route(value = "about", layout = MainLayout.class)
-public class AboutView extends VerticalLayout {
+public class AboutPage extends VerticalLayout {
 
-    public AboutView() {
+	private static final long serialVersionUID = -8572621081699565345L;
+
+	
+	public AboutPage() {
         setSpacing(false);
 
         Image img = new Image("images/empty-plant.png", "placeholder plant");
