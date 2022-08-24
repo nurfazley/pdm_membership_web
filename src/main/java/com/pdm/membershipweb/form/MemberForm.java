@@ -9,5 +9,9 @@ public class MemberForm extends FormLayout {
 	
 	public MemberForm() {
 		super();
+		setResponsiveSteps(new ResponsiveStep("30em", 1));
+		
+		FormLayout formLayout = new FormLayout();
+		formLayout.setResponsiveSteps(new ResponsiveStep("30em", 1), new ResponsiveStep("30em", 2));
 	}
 }
