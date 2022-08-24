@@ -6,4 +6,8 @@ public class MemberForm extends FormLayout {
 
 	private static final long serialVersionUID = -6295644438667759207L;
 
+	
+	public MemberForm() {
+		super();
+	}
 }
