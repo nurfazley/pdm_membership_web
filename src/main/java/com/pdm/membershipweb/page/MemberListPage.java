@@ -1,5 +1,7 @@
 package com.pdm.membershipweb.page;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -8,12 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pdm.membership.model.Member;
 import com.pdm.membership.service.MemberService;
-import com.pdm.membershipweb.grid.MembersGrid;
+import com.pdm.membershipweb.form.MemberForm;
+import com.pdm.membershipweb.grid.MemberGrid;
+import com.pdm.membershipweb.model.lookup.Country;
+import com.pdm.membershipweb.model.lookup.State;
 import com.pdm.membershipweb.view.MainLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid.SelectionMode;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -34,7 +41,7 @@ public class MemberListPage extends VerticalLayout {
 	
 	private Button deleteMemberButton;
 	
-	private MembersGrid membersGrid;
+	private MemberGrid memberGrid;
 	
 	private Member selectedMember;
 	
@@ -58,7 +65,7 @@ public class MemberListPage extends VerticalLayout {
 		
 		updateMemberButton = new Button("Update Record");
 		updateMemberButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		updateMemberButton.addClickListener(event -> {}); 
+		updateMemberButton.addClickListener(event -> updateMemberPage()); 
 		
 		deleteMemberButton = new Button("Delete Record");
 		deleteMemberButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -71,15 +78,15 @@ public class MemberListPage extends VerticalLayout {
 		buttonLayout.add(deleteMemberButton);
 		add(buttonLayout);
 		
-		membersGrid = new MembersGrid(Member.class);
-		membersGrid.setSelectionMode(SelectionMode.SINGLE);
-		membersGrid.addItemClickListener(event -> {
+		memberGrid = new MemberGrid(Member.class);
+		memberGrid.setSelectionMode(SelectionMode.SINGLE);
+		memberGrid.addItemClickListener(event -> {
 			selectedMember = event.getItem();
 		});
-		membersGrid.setPageSize(10);
-		membersGrid.setPaginatorSize(20);
+		memberGrid.setPageSize(10);
+		memberGrid.setPaginatorSize(20);
 		
-		add(membersGrid);
+		add(memberGrid);
 		addClassName("list-view");
 		setSizeFull();
 		
@@ -88,12 +95,91 @@ public class MemberListPage extends VerticalLayout {
 	
 	private void getNewsList() {
 		List<Member> memberList = memberService.findAll();
-		membersGrid.setItems(memberList);
+		memberGrid.setItems(memberList);
 	}
 	
 	private void newMemberPage() {
 		NewMemberPage newMemberPage = new NewMemberPage();
+		MemberForm memberForm = newMemberPage.getMemberForm();
+		
+		memberForm.getState().setItems(getStateList());
+		memberForm.getState().setValue(State.PAHANG.getTextString());
+		memberForm.getCountry().setItems(getCountryList());
+		memberForm.getCountry().setValue(Country.MALAYSIA.getTextString());
 	
+		newMemberPage.getSaveButton().addClickListener(listener -> {
+			
+		});
+		
 		newMemberPage.open();
+	}
+	
+	private void updateMemberPage() {
+		if (selectedMember == null) {
+			setNotification("You need to select a member...");
+			return;
+		}
+		
+		UpdateMemberPage updateMemberPage = new UpdateMemberPage();
+		updateMemberPage.open();
+		
+		MemberForm memberForm = updateMemberPage.getMemberForm();
+		mapMemberToForm(selectedMember, memberForm);
+	}
+	
+	private void mapMemberToForm(Member member, MemberForm memberForm) {
+		memberForm.getMemberId().setValue(member.getMemberId());
+		memberForm.getFullName().setValue(member.getFullName());
+		memberForm.getIc().setValue(member.getIc());
+		memberForm.getStaffId().setValue(member.getStaffId());
+		memberForm.getPhoneNo().setValue(member.getPhoneNo());
+		memberForm.getEmail().setValue(member.getEmail());
+		memberForm.getAddress().setValue(member.getAddress());
+		memberForm.getPostCode().setValue((double) member.getPostCode());
+		
+		memberForm.getState().setItems(getStateList());
+		memberForm.getState().setValue(member.getState());
+		
+		memberForm.getCountry().setItems(getCountryList());
+		memberForm.getCountry().setValue(member.getCountry());
+		
+		memberForm.getIsMember().setValue(member.isMember());
+		memberForm.getIsActive().setValue(member.isActive());
+		memberForm.getIsMobileAppActivated().setValue(member.isMobileAppActivated());
+		memberForm.getIsStaff().setValue(member.isStaff());
+	}
+	
+	private void mapFormToMember(MemberForm memberForm, Member member) {
+		member.setMemberId(memberForm.getMemberId().getValue());
+		member.setFullName(memberForm.getFullName().getValue());
+		member.setIc(memberForm.getIc().getValue());
+		member.setStaffId(memberForm.getStaffId().getValue());
+		member.setPhoneNo(memberForm.getPhoneNo().getValue());
+		member.setEmail(memberForm.getEmail().getValue());
+		member.setAddress(memberForm.getAddress().getValue());
+		member.setPostCode(memberForm.getPostCode().getValue().intValue());
+		member.setState(memberForm.getState().getValue());
+		member.setCountry(memberForm.getCountry().getValue());
+		
+		member.setMember(memberForm.getIsMember().getValue());
+		member.setActive(memberForm.getIsActive().getValue());
+	}
+	
+	private List<String> getStateList() {
+		List<String> stateList = new ArrayList<>();
+		Arrays.asList(State.values()).forEach(state -> stateList.add(state.getTextString()));
+		
+		return stateList;
+	}
+	
+	private List<String> getCountryList() {
+		List<String> countryList = new ArrayList<>();
+		Arrays.asList(Country.values()).forEach(country -> countryList.add(country.getTextString()));
+		
+		return countryList;
+	}
+	
+	private void setNotification(String content ) {
+		Notification.show(content, 2000, Position.BOTTOM_CENTER);
 	}
 }

@@ -2,6 +2,7 @@ package com.pdm.membershipweb.view;
 
 import com.pdm.membershipweb.page.AboutPage;
 import com.pdm.membershipweb.page.HomePage;
+import com.pdm.membershipweb.page.InquiryListPage;
 import com.pdm.membershipweb.page.MemberListPage;
 import com.pdm.membershipweb.page.NewsListPage;
 import com.pdm.membershipweb.page.NotificationListPage;
@@ -80,12 +81,14 @@ public class MainLayout extends AppLayout {
     }
 
     private MenuItemInfo[] createMenuItems() {
-        return new MenuItemInfo[] { 
+    	return new MenuItemInfo[] { 
             new MenuItemInfo("Home", "la la-globe", HomePage.class), 
             new MenuItemInfo("Member", "la la-user", MemberListPage.class), 
             new MenuItemInfo("Notification", "la la-comment", NotificationListPage.class), 
             new MenuItemInfo("News", "la la-list", NewsListPage.class),
+            new MenuItemInfo("Inquiry", "la la-question-circle-o", InquiryListPage.class),
             new MenuItemInfo("Redeemable Item", "la la-indent", RedeemableItemListPage.class),
+            new MenuItemInfo("Voucher", "la la-money", RedeemableItemListPage.class),
             new MenuItemInfo("About", "la la-file", AboutPage.class), 
         };
     }

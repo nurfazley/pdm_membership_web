@@ -18,7 +18,9 @@ public class MyFirebaseMessagingHelper {
 	
 	
 	public MyFirebaseMessagingHelper() {
-		init();
+		if (app == null) {
+			init();
+		}
 	}
 	
 	public FirebaseMessaging getFirebaseMessaging() throws IOException {
@@ -45,6 +47,8 @@ public class MyFirebaseMessagingHelper {
 	            .builder()
 	            .setCredentials(googleCredentials)
 	            .build();
-	    app = FirebaseApp.initializeApp(firebaseOptions, "PDM Push Notification");
+	    
+	    app = FirebaseApp.initializeApp(firebaseOptions);
+	    //app = FirebaseApp.initializeApp(firebaseOptions, "PDM Push Notification");
 	}
 }

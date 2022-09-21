@@ -16,11 +16,11 @@ import com.pdm.membership.model.Image;
 import com.pdm.membership.model.News;
 import com.pdm.membership.model.lookup.NewsStatus;
 import com.pdm.membership.model.lookup.NewsType;
+import com.pdm.membership.service.ImageService;
 import com.pdm.membership.service.NewsService;
 import com.pdm.membershipweb.form.NewsForm;
 import com.pdm.membershipweb.grid.NewsGrid;
 import com.pdm.membershipweb.helper.DialogBoxHelper;
-import com.pdm.membershipweb.service.ImageService;
 import com.pdm.membershipweb.view.MainLayout;
 import com.vaadin.componentfactory.EnhancedDialog;
 import com.vaadin.flow.component.button.Button;
@@ -256,16 +256,117 @@ public class NewsListPage extends VerticalLayout {
 		NewsForm newsForm = updateNewsPage.getNewsForm();
 		mapNewsToForm(selectedNews, newsForm);
 		
+		newsForm.getSmallImageFileUpload().addSucceededListener(event -> {
+			smallFileName = "li-" + event.getFileName();
+			smallFileType = event.getMIMEType();
+		});
+		newsForm.getBigImageFileUpload().addSucceededListener(event -> {
+			bigFileName = "mi-" + event.getFileName();
+			bigFileType = event.getMIMEType();
+		});
+		
 		updateNewsPage.getSaveButton().addClickListener(listener -> {
 			if (!validateForm(newsForm)) {
 				return;
 			}
 			
+			Image smallImage = null;
+			Image bigImage = null;
+			
+			if (newsForm.getSmallImageFileUpload() != null && newsForm.getSmallFileBuffer() != null && newsForm.getSmallFileBuffer().getFileName() != null) {
+				System.out.println("Have new small image...");
+				InputStream is = newsForm.getSmallFileBuffer().getInputStream();
+				byte[] byteData = null;
+				
+				try {
+					byteData = IOUtils.toByteArray(is);
+					
+					List<Image> imageList = imageService.getImageListByNewsId(selectedNews.getId());
+					Long smallImageTempId = null;
+					
+					if (imageList != null && !imageList.isEmpty()) {
+						for (Image tempImage : imageList) {
+							if (tempImage.getImageName().startsWith("li-")) {
+								smallImageTempId = tempImage.getId();
+								smallImage = tempImage;
+							}
+						}
+					}
+					
+					// Create new image
+					if (byteData != null && byteData.length > 0) {
+						Image newSmallImage = createImageObject(selectedNews, byteData, smallFileName, smallFileType);
+						imageService.saveImage(newSmallImage);
+						
+						// Delete old image
+						if (smallImage != null) {
+							imageService.deleteImage(smallImage);
+						}
+					}
+					// Existing image
+					else {
+						if (smallImage != null && smallImageTempId != null) {
+							imageService.saveImage(smallImage);
+						}
+					}
+				} 
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (newsForm.getBigImageFileUpload() != null && newsForm.getBigFileBuffer() != null && newsForm.getBigFileBuffer().getFileName() != null) {
+				System.out.println("Have new big image...");
+				InputStream is = newsForm.getBigFileBuffer().getInputStream();
+				byte[] byteData = null;
+				
+				try {
+					byteData = IOUtils.toByteArray(is);
+					
+					List<Image> imageList = imageService.getImageListByNewsId(selectedNews.getId());
+					Long bigImageTempId = null;
+					
+					if (imageList != null && !imageList.isEmpty()) {
+						for (Image tempImage : imageList) {
+							if (tempImage.getImageName().startsWith("mi-")) {
+								bigImageTempId = tempImage.getId();
+								bigImage = tempImage;
+							}
+						}
+					}
+					
+					// Create new image
+					if (byteData != null && byteData.length > 0) {
+						Image newBigImage = createImageObject(selectedNews, byteData, bigFileName, bigFileType);
+						imageService.saveImage(newBigImage);
+						
+						// Delete old image
+						if (bigImage != null) {
+							imageService.deleteImage(bigImage);
+						}
+					}
+					else {
+						if (bigImage != null && bigImageTempId != null) {
+							bigImage.setId(bigImageTempId);
+							imageService.saveImage(bigImage);
+						}
+					}
+				} 
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		
+			List<Image> newImageList = new ArrayList<>();
+			newImageList.add(smallImage);
+			newImageList.add(bigImage);
+			
 			mapFormToNews(newsForm, selectedNews);
+			selectedNews.setImageList(newImageList);
 			newsService.save(selectedNews);
 			setNotification("News is being updated into the system...");
+						
 			updateNewsPage.close();
-			
 			getNewsList();
 			newsGrid.getDataProvider().refreshItem(selectedNews);
 			selectedNews = new News();

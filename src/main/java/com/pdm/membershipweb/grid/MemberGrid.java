@@ -6,18 +6,18 @@ import org.vaadin.klaudeta.PaginatedGrid;
 
 import com.pdm.membership.model.Member;
 
-public class MembersGrid extends PaginatedGrid<Member> {
+public class MemberGrid extends PaginatedGrid<Member> {
 
 	private static final long serialVersionUID = 2842101264913214968L;
 	
 	
-	public MembersGrid(Class<Member> member) {
+	public MemberGrid(Class<Member> member) {
 		super(member);
 		configureGrid();
 	}
 	
 	private void configureGrid() {
-		addClassName("members-grid");
+		addClassName("member-grid");
 		setSizeFull();
 		setColumns("id"); 
 		

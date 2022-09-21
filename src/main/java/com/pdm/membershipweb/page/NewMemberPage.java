@@ -1,6 +1,6 @@
 package com.pdm.membershipweb.page;
 
-import com.pdm.membershipweb.form.NewsForm;
+import com.pdm.membershipweb.form.MemberForm;
 import com.vaadin.componentfactory.EnhancedDialog;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -9,6 +9,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 public class NewMemberPage extends EnhancedDialog {
 
 	private static final long serialVersionUID = 5038523907764586735L;
+	
+	private MemberForm memberForm;
 
 	private Button saveButton;
 	
@@ -19,9 +21,9 @@ public class NewMemberPage extends EnhancedDialog {
 		super();
 		
 		Div content = new Div();
-		//newsForm = new NewsForm();
+		memberForm = new MemberForm();
 		
-		//content.add(newsForm);
+		content.add(memberForm);
 		content.addClassName("member-content");
 		content.setSizeFull();
 		
@@ -36,5 +38,29 @@ public class NewMemberPage extends EnhancedDialog {
 		setFooter(buttonLayout);
 		setWidth("1220px");
 		setHeight("560px");
+	}
+
+	public MemberForm getMemberForm() {
+		return memberForm;
+	}
+
+	public void setMemberForm(MemberForm memberForm) {
+		this.memberForm = memberForm;
+	}
+
+	public Button getSaveButton() {
+		return saveButton;
+	}
+
+	public void setSaveButton(Button saveButton) {
+		this.saveButton = saveButton;
+	}
+
+	public Button getCancelButton() {
+		return cancelButton;
+	}
+
+	public void setCancelButton(Button cancelButton) {
+		this.cancelButton = cancelButton;
 	}
 }

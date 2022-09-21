@@ -12,6 +12,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 
+
 public class NewsForm extends FormLayout {
 
 	private static final long serialVersionUID = -5041219542416866617L;
@@ -69,11 +70,11 @@ public class NewsForm extends FormLayout {
 		
 		smallImageFileUpload = new Upload(smallFileBuffer);
 		smallImageFileUpload.setUploadButton(new Button("Upload File"));
-		formLayout.add(setFormItemLabelStyle(formLayout.addFormItem(smallImageFileUpload, "File Image (Small Image)")), 2);
+		formLayout.add(setFormItemLabelStyle(formLayout.addFormItem(smallImageFileUpload, "File Image (Small Image) - 120px X 120px")), 2);
 		
 		bigImageFileUpload = new Upload(bigFileBuffer);
 		bigImageFileUpload.setUploadButton(new Button("Upload File"));
-		formLayout.add(setFormItemLabelStyle(formLayout.addFormItem(bigImageFileUpload, "File Image (Big Image)")), 2);
+		formLayout.add(setFormItemLabelStyle(formLayout.addFormItem(bigImageFileUpload, "File Image (Big Image) - 360px X 140px")), 2);
 		
 		formLayout.setWidthFull();
 		Accordion accordion = new Accordion();
